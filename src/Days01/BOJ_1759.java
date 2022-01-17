@@ -87,9 +87,9 @@ public class BOJ_1759 {
         /*
         for (int i = 0; i < C; i++) {
             if( isVowel( data[i] ) )
-                DFS( 1, 0,1,i,data[i]+"");
+                DFS( 1, 0, 1, i, data[i]+"");
             else
-                DFS( 1, 1,0,i,data[i]+"");
+                DFS( 1, 1, 0, i, data[i]+"");
         }
          */
 
@@ -99,6 +99,9 @@ public class BOJ_1759 {
         }
     }
 
+
+    // DFS( int length, int cont, int vowel, int current, String pwd )
+    // DFS ( 암호 길이, 자음 개수, 모음 개수, 현재 인덱스, 현재 암호 )
     private static void DFS( int length, int cont, int vowel, int current, String pwd ) {
         /*
             오름차순 ?
