@@ -18,14 +18,58 @@ public class BOJ_1713 {
     static int N;
     static int R;
 
-    static int[] count; // N명의 학생이 받은 추천 수
-    static int[] time;
-    static ArrayList<Integer> Recommends;
+    static class Person implements Comparable<Person>{
+        int num;                // 학생 번호
+        int count;              // 추천 수
+        int timeStamp;          // 등록일자
+        boolean isIn;           // 사진틀에 있는 지.
+
+        public Person(int num, int count, int timeStamp, boolean isIn) {
+            this.num = num;
+            this.count = count;
+            this.timeStamp = timeStamp;
+            this.isIn = isIn;
+        }
+
+        @Override
+        public String toString() {
+            return "Person{" +
+                    "num=" + num +
+                    ", count=" + count +
+                    ", timeStamp=" + timeStamp +
+                    ", isIn=" + isIn +
+                    '}';
+        }
+
+        @Override
+        public int compareTo(Person o) {
+            int comp1 = Integer.compare( count, o.count );
+            if( comp1 == 0 ) {  // 추천수가 동일하다면, timeStamp 오름차순.
+                return Integer.compare( timeStamp, o.timeStamp );
+            }
+            else {  // 추천수 오름차순
+                return comp1;
+            }
+        }
+
+        public int getNum() {
+            return num;
+        }
+
+        public int getCount() {
+            return count;
+        }
+
+        public int getTimeStamp() {
+            return timeStamp;
+        }
+    }
+
+    static Person[] people;
+    static int[] inputs;
 
     static BufferedReader br;
     static StringBuilder sb;
-
-    static ArrayList<Integer> Photos;
 
     public static void main(String[] args) throws IOException {
         br = new BufferedReader( new InputStreamReader( System.in ));
@@ -35,128 +79,96 @@ public class BOJ_1713 {
         R = Integer.parseInt( br.readLine() );      // 추천 수
         StringTokenizer st = new StringTokenizer( br.readLine(), " ");
 
-        Photos = new ArrayList<>();
-        Recommends = new ArrayList<>();
+        inputs = new int[ R ];  // 추천 수
+        people =new Person[ 101 ];  // 학생의 번호는 1부터 100까지의 자연수이다.
 
-        for (int i = 0; i < R; i++) {
-            Recommends.add( Integer.parseInt( st.nextToken() ) );
-        }
+        // Person[] A = new Person[ 4 ];
+        // Person[] B = new Person[ 4 ];
 
-        // 1 ~ max 번 학생의 추천 수..
-        // index 번에 따른 추천 수 count[index]
-        count = new int[ 101 ];
-        time = new int[ 101 ];
+        // 기본 자료형을 제외한 모든 객체는 레퍼런스 타입.
+        // Person p = new Person(0,0,0);
+        /*
+        A[0] = p;   // p의 주소 값.
+        B[0] = p;   // p의 주소 값.
+        p.count = 3;
+        A[0].count ==> ?? >> 3
 
-        Iterator< Integer > ir = Recommends.iterator();
-        while ( ir.hasNext() ) {
-            int number = ir.next(); // 추천된 학생 번호
 
-            for ( int num : Photos ) {
-                time[num]++;
+        int [] C = new int[4];
+        int [] D = new int[4];
+        D[0] = C[0];
+        C[0] = 4;
+
+        D[0] ==> ?? >> 0
+         */
+
+        List<Person> list = new ArrayList<>();
+
+        for (int k = 0; k < R; k++) {
+            int num = Integer.parseInt( st.nextToken() );
+
+            if( people[num] == null ){  // 학생 번호에 따른 객체가 없을 때 새로 생성.
+                people[num] = new Person( num,0,0, false);
             }
-            // System.out.println( Arrays.toString( time ));
-
-            // 사진 틀의 크기가 N보다 작을 때
-            if( Photos.size() < N ) {
-                // 이미 사진 틀에 걸려있는 학생의 번호가 추천 번호라면 ?
-                if( Photos.contains( number ) ) {
-                    count[ number ]++;      // 추천 수만 증가한다.
-                }
-                // 새롭게 추천된 학생의 번호라면 ?
-                else {
-                    Photos.add( number );
-                    count[ number ]++;
-                }
-
-                // System.out.println( Photos );
+            // 사진 틀에 존재하는 경우
+            if( people[num].isIn == true ){
+                people[num].count++;
             }
-            // 추천 받은 학생의 수가 사진 틀의 크기를 초과했다.
+            // 사진 틀에 존재하지 않는 경우
             else {
-                // 사진 틀에 있는 학생인 경우, 추천수만 증가.
-                if( Photos.contains(number) ) {
-                    count[number]++;
+                // 자리가 없는 경우, 하나 골라서 제거 후, 새 후보 추가.
+                if( list.size() == N ) {
+                    Collections.sort( list );   // 추천 수와 timeStamp 순으로 오름차순 정렬.
+                    Person p = list.remove(0);  // 0 인덱스 부분에, 추천 수가 가장 적거나, 오래 게시된 학생 번호가 오게 된다.
+                    p.isIn = false;
+                    // p.count = 0; isIn을 사용함으로써, 안해줘도 된다.
+                    //
                 }
-                // 사진 틀에 없는 학생인 경우, 사진 틀에서 누군가를 삭제해야 한다.
-                else {
-                    int mincount = Integer.MAX_VALUE;   // 가장 작은 추천 수
-                    int stcount = 0;                    // 추천 수가 가장 적은 학생의 수
-
-                    // num : 사진 틀에 걸려있는 학생 번호.
-                    for ( int num : Photos )  {
-                        mincount = Math.min( count[num] , mincount );
-                    }
-                    // System.out.println("mincount:"+mincount);
-
-                    // 가장 작은 추천 수를 가진 학생의 수를 구한다. stcount
-                    for (int i = 1; i < count.length; i++) {
-                        if( mincount == count[i] && Photos.contains(i) )
-                            stcount++;
-                    }
-                    // System.out.println("stcount:"+stcount);
-
-                    // 추천 수가 가장 적은 학생의 수가 2보다 작을 때
-                    if( stcount < 2 ) {
-                        for (int i = 1; i < count.length; i++) {
-                            if( mincount == count[i] && Photos.indexOf(i) != -1  ) {
-                                Photos.remove( Photos.indexOf(i) );     // 추천 수가 가장 작은 학생을 지운다.
-                                count[ i ] = 0;         // 추천 수 또한 0으로 초기화 한다.
-                                time[ i ] = 0;
-                                break;
-                            }
-
-                        }
-                    }
-
-                    // 추천 수가 가장 적은 학생의 수가 2명 이상일 때
-                    else {
-                        int oldtime = Integer.MIN_VALUE;
-
-                        for (int i = 0; i < count.length; i++) {
-                            if( count[i] == mincount ) {
-                                // 이 때의 i 값 여러개가 삭제되어야 할 학생 번호.
-                                oldtime = Math.max( time[i], oldtime );        // 그 번호들 중 가장 오래된 시간.
-                            }
-                        }
-
-                        // 이 때 구한 oldtime 은 가장 오래된 학생의 시간.
-                        int oldnum = 0;
-
-                        for (int i = 0; i < time.length; i++) {
-                            if( time[i] == oldtime ) {
-                                // 이 때 i번 학생이 삭제 되어야 한다.
-                                oldnum = i;
-                            }
-                        }
-
-                        // 사진 틀을 삭제할 때 사용하는 인덱스
-                        int delidx = Photos.indexOf( oldnum );
-
-                        // System.out.println( "delidx:"+delidx );
-
-                        Photos.remove( delidx );
-                        count[ oldnum ] = 0;
-                        time[ oldnum ] = 0;
-
-
-                        Photos.add( delidx, number );
-                        count[ number ]++;
-
-
-
-                        // System.out.println( Photos );
-                    }
-                }
+                // 사진 틀에 넣어줄 때, count를 1로 다시 설정.
+                people[num].count = 1;
+                people[num].isIn = true;
+                people[num].timeStamp = k; // 사진 틀에 올릴 때 timeStamp를 설정.
+                list.add( people[num] );    // list에 그냥 더해줘도 된다.
+                // 제거를 하는 과정에서 정렬을 한 후, 제거를 하기 때문에.
             }
-
-
-
         }
 
-        // 큐를 오름차순으로 정렬.
-        Collections.sort( Photos );
+        /*
+                [2 1 4] <- 3
+                [1 4 3] <- 5
+                [4 3 5] <- 6
+                [3 5 6] <- 2
+                [5 6 2] <- 7
+                [6 2 7] <- 2
+                [6 2 7]
+         */
 
-        while ( !Photos.isEmpty() ) {
-            sb.append( Photos.remove(0) ).append(" ");
+        // list를 num 오름차순으로 정렬.
+        // 익명의 new Comparator<Person>() 람다로 바꿀수 있습니다.
+        /*
+        -- 정렬 부분 꼭 공부해두기 --
+        ( Person의 num을 기준으로 오름차순 정렬하는 방법. )
+
+        Collections.sort(list, new Comparator<Person>() {
+            @Override
+            public int compare(Person o1, Person o2) {
+                return Integer.compare( o1.num, o2.num );
+            }
+        });
+
+        Collections.sort(list, (o1, o2) -> Integer.compare( o1.num, o2.num ));
+
+        // *** Comparator.comparingInt( Person::getNum ) ***
+
+        Collections.sort(list, Comparator.comparingInt(o -> o.num));
+
+         */
+
+        Collections.sort( list, Comparator.comparingInt( Person :: getNum ) );
+
+
+        while ( !list.isEmpty() ) {
+            sb.append( list.remove(0).num ).append(" ");
         }
 
         System.out.println( sb );
