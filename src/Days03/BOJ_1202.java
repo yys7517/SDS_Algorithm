@@ -44,8 +44,12 @@ public class BOJ_1202 {
 
         Arrays.sort( bags );     // 가방 무게 오름차순 정렬.
         Arrays.sort( jewerls, Comparator.comparingInt( Jewerl::getWeight ));    // 보석 무게 오름차순 정렬
+        // 보석은 무게 오름차순으로 정렬하여야 한다. 그래야 가방에 넣을 수 있는 보석을 빨리 넣을 수 있다.
+
         // 보석 가격 높은 값 기준 힙
         PriorityQueue<Jewerl> pq = new PriorityQueue( Comparator.comparingInt(Jewerl::getPrice).reversed() );
+        // 우선 순위 큐 ( 힙 )에 넣을 때만, 가격 내림차순으로 하여 보석을 집어 넣는다.
+        // 가격이 높은 보석이 우선 순위를 높게 가진다.
 
         int jIndex = 0;
         long result = 0;
@@ -60,7 +64,7 @@ public class BOJ_1202 {
             }
             // 가방에 넣을 수 있는 보석이 존재하면
             if( !pq.isEmpty() ) {
-                result += pq.poll().price;
+                result += pq.poll().price;  // 가장 우선순위가 높은 값을 뽑는다. ( 가격이 가장 비싼 보석을 선택해야 함. )
             }
         }
 
