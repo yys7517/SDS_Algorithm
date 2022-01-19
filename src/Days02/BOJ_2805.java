@@ -32,14 +32,15 @@ public class BOJ_2805 {
             max = Math.max( trees[i], max );
         }
 
-        long result = BinarySearch();
+        long result = ParamaterSearch();
 
         System.out.println( result );
     }
 
-    private static long BinarySearch() {
+    private static long ParamaterSearch() {
         long start = 0;
         long end = max;
+        long result = 0;    // 결과 값.
 
         while ( start <= end ) {
             long mid = ( start + end ) / 2;
@@ -48,9 +49,12 @@ public class BOJ_2805 {
                 if( trees[i] >= mid )
                     sum += trees[i] - mid;
             }
-
+            // sum == M -> 정답, 탈출
+            // sum < M -> mid -> end
+            // sum > M -> mid -> s , 정답 후보
             if( sum == M ) {
-                return mid;
+                result = mid;
+                break;
             }
             else if( sum < M ) {
                 // 톱을 낮춰야 한다.
@@ -59,10 +63,12 @@ public class BOJ_2805 {
             else {  // sum > M
                 // 톱을 높여야 한다.
                 start = mid + 1;
+                result = mid;
             }
         }
         // start가 upperbound가 되었거나, 마지노선인 end값이 되었다는 것.
-        return end;
+        // return end;
         // return start - 1 ;
+        return result;
     }
 }
