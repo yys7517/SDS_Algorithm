@@ -11,10 +11,6 @@ public class BOJ_2243 {
     // index : 맛
     // value : 개수
 
-    /*
-        mid = (left+right) / 2 ;
-        Q( 2 )
-     */
     static BufferedReader br;
     static StringBuilder sb;
 
@@ -73,25 +69,36 @@ public class BOJ_2243 {
         }
         int mid = ( left + right ) / 2;
         // 2. 왼쪽 >= index -> 왼쪽으로 이동.
+        // index번 째로 맛있는 사탕이
+        // 왼쪽 자식 노드의 개수( 왼쪽 서브 트리의 사탕 개수 합 )
+        // 보다 작을 때, 우리가 찾는 index번 째 사탕은 왼쪽에 있다.
         if ( tree[ node * 2 ] >= index ) {
-            return Query( left, mid, node * 2, index );
+            return Query( left, mid, node * 2, index ); // 왼쪽으로 ㄱㄱ
         }
+
         // 3. 왼쪽 < index
         else {
+            // 왼쪽을 포함해서 index 번째 이므로, 오른쪽 서브트리로 가서 사탕을 찾을 때는,
+            // index - tree[node * 2] 의 개수 만큼 뺀 순위의 사탕을 찾는다.
             return Query( mid + 1, right, node * 2 + 1, index - tree[ node * 2 ] );
         }
     }
 
+
     private static void update(int left, int right, int node, int target, int diff) {
+        // 1. 범위 내의 사탕인가 ?
         if( target < left || target > right ) {
             return;
         }
 
+        // 2. 개수 수정.
         tree[node] += diff;
 
+        // 3. leaf 노드까지 재귀하여 수정한다.
         if( left == right )
             return;
 
+        // 4. leaf 노드가 아니라면, 둘로 나뉘어져서 수정한다.
         int mid = ( left + right ) / 2;
         update( left, mid , node * 2 , target, diff );
         update( mid + 1, right , node * 2 + 1, target, diff );
