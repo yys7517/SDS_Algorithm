@@ -80,15 +80,17 @@ public class BOJ_2042 {
     // left ~ right 구간 합 트리를 생성하는 메서드.
     // node  : 현재 인덱스
     private static long init(int left, int right, int node) {
+        // left와 right값이 같을 때는 leaf 노드이다.
+        // leaf 노드일 경우, left번째 데이터의 값과 같다. left : 1 , right : 1
+        // 1 ~ 1 구간의 합 : 1번째 데이터.
         if( left == right ) {
-            // left와 right값이 같을 때는 leaf 노드이다.
-            return tree[node] = arr[left];
+            return tree[node] = arr[left] ; // == arr[right]
         }
-        // 따라서 arr[left]값을 반환해도됨. ex) left : 1, right : 1
-        // 트리의 노드의 값은 leaf 노드이므로 left번째 데이터 값
 
+        // leaf 노드가 아닌 내부 노드의 경우
         int mid = ( left + right ) / 2;
 
+        // 두 개의 노드로 나눠진다.
         return tree[node] = init( left, mid, node * 2 ) + init( mid + 1, right, node * 2 + 1 );
         // 왼쪽 자식과 오른쪽 노드의 합이 자기 자신이 됨.
         // 왼쪽 자식은 left ~ mid, idx = node * 2
@@ -100,10 +102,12 @@ public class BOJ_2042 {
     // 구하고자 하는 구간 합 : Queryleft ~ Queryright
     private static long sum( int left, int right, int node, int Queryleft, int Queryright ) {
         // 범위 밖에 있는 경우
+        // 구하고자 하는 범위의 시작점이 , 구간의 right 보다 큰 경우 : 구하고자 하는 구간보다 왼쪽에 있는 구간
+        // 구하고자 하는 범위의 마지막점이, 구간의 left보다 작은 경우 : 구하고자 하는 구간보다 오른쪽에 있는 구간.
         if( Queryleft > right || Queryright < left ) {
             return 0;
         }
-        // 범위 안에 있는 경우
+        // 범위 안에 있는 경우 ( 구하고자 하는 구간이 완전히 구간을 품은 경우 )
         if( Queryleft <= left && Queryright >= right ) {
             return tree[node];
         }
