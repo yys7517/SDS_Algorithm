@@ -37,13 +37,14 @@ public class BOJ_1717 {
             int b = Integer.parseInt( st.nextToken() );
 
             if( op == 0 ) {
+//                System.out.println(Arrays.toString( graph ));
                 Union(a,b);
+//                System.out.printf("Union(%d,%d) : ",a,b);
 //                System.out.println(Arrays.toString( graph ));
             }
 
             else {
-                boolean bl = Same(a,b);
-                if( bl )
+                if( Same(a,b) )
                     System.out.println("YES");
                 else
                     System.out.println("NO");
@@ -72,6 +73,10 @@ public class BOJ_1717 {
         if( graph[V] == V )
             return V;
         else
-            return graph[V] = Find( graph[V] );
+            return graph[V] = Find( graph[V] ); // 경로 압축. 시간복잡도 개선.
+            // return Find( graph[V] )
+            // union(1,1)
+            // graph[1] = 3 이므로 Find(3)의 값이 graph[1]에 들어감.
+            // graph[1] = 6
     }
 }
