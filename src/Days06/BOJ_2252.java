@@ -31,7 +31,7 @@ public class BOJ_2252 {
 
     static Queue<Integer> queue;        // 진입차수가 0인 정점들을 저장할 큐
     static int[] indegree;
-    // static int[][] graph;
+
     static ArrayList<Integer>[] map;
     static StringBuilder sb;
 
