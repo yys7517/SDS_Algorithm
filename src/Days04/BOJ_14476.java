@@ -1,8 +1,6 @@
 package Days04;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
@@ -76,6 +74,7 @@ public class BOJ_14476 {
         }
     }
 
+    // gcd(a,b) == gcd(b, a%b), stop when a % b == 0, b -> gcd
     static int gcd(int a, int b) {
         while (b != 0) {
             int r = a % b;
